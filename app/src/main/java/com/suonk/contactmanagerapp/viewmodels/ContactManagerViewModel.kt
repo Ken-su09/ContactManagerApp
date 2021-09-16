@@ -2,6 +2,7 @@ package com.suonk.contactmanagerapp.viewmodels
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.repositories.ContactManagerRepository
@@ -13,8 +14,8 @@ import javax.inject.Inject
 class ContactManagerViewModel @Inject constructor(private val repository: ContactManagerRepository) :
     ViewModel() {
 
-    val allContactsAlphabet = repository.allContactsAlphabet
-    val allContactsInverseAlphabet = repository.allContactsInverseAlphabet
+    val allContactsAlphabet = repository.allContactsAlphabet.asLiveData()
+    val allContactsInverseAlphabet = repository.allContactsInverseAlphabet.asLiveData()
 
     fun getContactById(contactId: Int) = repository.getContactById(contactId)
 
