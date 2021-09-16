@@ -1,22 +1,44 @@
 package com.suonk.contactmanagerapp.ui.activity
 
+import android.Manifest
+import android.content.ContentResolver
+import android.content.ContentUris
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.ContactsContract
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
+import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.databinding.ActivityMainBinding
+import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.navigation.ContactManagerCoordinator
 import com.suonk.contactmanagerapp.navigation.Navigator
+import com.suonk.contactmanagerapp.viewmodels.ContactManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
+import java.io.InputStream
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        const val PERMISSIONS_REQUEST_READ_CONTACTS = 100
+    }
+
     @Inject
-    private lateinit var navigator: Navigator
+    lateinit var navigator: Navigator
+
     private lateinit var coordinator: ContactManagerCoordinator
     private lateinit var binding: ActivityMainBinding
+
+    private val viewModel: ContactManagerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,15 +59,115 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startContactsList() {
+        loadContacts()
         coordinator.showContactsList()
     }
 
-    private fun startContactDetails() {
+    fun startContactDetails() {
         coordinator.showContactDetails()
     }
 
     private fun startAddNewContact() {
         coordinator.showAddNewContact()
+    }
+
+    private fun loadContacts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
+                Manifest.permission.READ_CONTACTS
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.READ_CONTACTS),
+                PERMISSIONS_REQUEST_READ_CONTACTS
+            )
+        } else {
+            getContacts()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                loadContacts()
+            }
+        }
+
+    }
+
+    private fun getContacts() {
+        val resolver: ContentResolver = contentResolver
+        val cursor = resolver.query(
+            ContactsContract.Contacts.CONTENT_URI, null, null, null,
+            null
+        )
+
+        if (cursor!!.count > 0) {
+            while (cursor.moveToNext()) {
+                val id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID))
+                val name =
+                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME))
+                val phoneNumber = (cursor.getString(
+                    cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)
+                )).toInt()
+                var phoneNumValue = ""
+
+                if (phoneNumber > 0) {
+                    val cursorPhone = contentResolver.query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=?",
+                        arrayOf(id),
+                        null
+                    )
+
+                    if (cursorPhone!!.count > 0) {
+                        while (cursorPhone.moveToNext()) {
+                            phoneNumValue = cursorPhone.getString(
+                                cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                            )
+                        }
+                    }
+                    cursorPhone.close()
+                }
+
+//                Log.i("ContactsListActivity", "Name : $name")
+
+                var bitmap = ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.ic_launcher_background,
+                    null
+                )!!.toBitmap()
+
+                try {
+                    if (id != null) {
+                        val inputStream: InputStream? =
+                            ContactsContract.Contacts.openContactPhotoInputStream(
+                                contentResolver,
+                                ContentUris.withAppendedId(
+                                    ContactsContract.Contacts.CONTENT_URI,
+                                    cursor.getColumnIndex(ContactsContract.Contacts._ID).toLong()
+                                )
+                            )
+                        if (inputStream != null) {
+                            bitmap = BitmapFactory.decodeStream(inputStream)
+                            inputStream.close()
+                        }
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                viewModel.addNewContact(
+                    Contact(
+                        name, "", bitmap, phoneNumValue, ""
+                    )
+                )
+            }
+        }
+        cursor.close()
     }
 
     override fun onDestroy() {
