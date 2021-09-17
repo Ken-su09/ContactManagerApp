@@ -12,7 +12,7 @@ class ContactsListAdapter :
     ListAdapter<Contact, ContactsListAdapter.ViewHolder>(ContactsComparator()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemContactBinding.inflate(LayoutInflater.from(parent.context))
+        val binding = ItemContactBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
