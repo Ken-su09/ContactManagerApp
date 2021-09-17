@@ -28,7 +28,7 @@ interface ContactDao {
     /**
      * addNewContact(contact)
      */
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addNewContact(contact: Contact)
 
     /**

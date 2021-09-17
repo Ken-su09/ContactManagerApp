@@ -45,6 +45,7 @@
                 android:layout_marginEnd="15dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_import" />
         </RelativeLayout>
 

@@ -54,10 +54,6 @@ class ContactsListFragment : Fragment() {
         addNewContactButton.setOnClickListener {
             (activity as MainActivity).startContactDetails()
         }
-
-        importContactsButton.setOnClickListener {
-            initRecyclerView()
-        }
     }
 
     private fun initRecyclerView() {

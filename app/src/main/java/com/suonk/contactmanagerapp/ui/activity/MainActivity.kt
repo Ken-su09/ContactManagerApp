@@ -3,6 +3,8 @@ package com.suonk.contactmanagerapp.ui.activity
 import android.Manifest
 import android.content.ContentResolver
 import android.content.ContentUris
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -38,6 +40,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var coordinator: ContactManagerCoordinator
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var sharedPreferences: SharedPreferences
+    private var isContactsAlreadyImported = false
+
     private val viewModel: ContactManagerViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +52,9 @@ class MainActivity : AppCompatActivity() {
 
         navigator.activity = this
         coordinator = ContactManagerCoordinator(navigator)
+
+        sharedPreferences = getSharedPreferences("contacts_already_imported", Context.MODE_PRIVATE)
+        isContactsAlreadyImported = sharedPreferences.getBoolean("contacts_already_imported", false)
 
         startSplashScreen()
         Handler(Looper.getMainLooper()).postDelayed({
@@ -59,7 +67,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startContactsList() {
-        loadContacts()
+        if(!isContactsAlreadyImported){
+            loadContacts()
+        }
         coordinator.showContactsList()
     }
 
@@ -83,6 +93,9 @@ class MainActivity : AppCompatActivity() {
             )
         } else {
             getContacts()
+            val edit = sharedPreferences.edit()
+            edit.putBoolean("contacts_already_imported", true)
+            edit.apply()
         }
     }
 
@@ -134,8 +147,6 @@ class MainActivity : AppCompatActivity() {
                     cursorPhone.close()
                 }
 
-//                Log.i("ContactsListActivity", "Name : $name")
-
                 var bitmap = ResourcesCompat.getDrawable(
                     resources,
                     R.drawable.ic_launcher_background,
@@ -160,13 +171,14 @@ class MainActivity : AppCompatActivity() {
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                viewModel.addNewContact(
-                    Contact(
-                        name, "", bitmap, phoneNumValue, ""
-                    )
+
+                val contact = Contact(
+                    name, "", bitmap, phoneNumValue, ""
                 )
+                viewModel.addNewContact(contact)
             }
         }
+
         cursor.close()
     }
 
