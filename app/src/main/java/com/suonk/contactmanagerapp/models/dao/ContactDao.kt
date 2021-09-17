@@ -20,6 +20,18 @@ interface ContactDao {
     fun getAllContactsOrderByInverseAlphabet(): Flow<List<Contact>>
 
     /**
+     * getAllFavoriteContactsOrderByAlphabet() = contactFavorite1, contactFavorite2, contactFavorite3...
+     */
+    @Query("SELECT * FROM contact_db WHERE isFavorite == 1 ORDER BY firstName ASC")
+    fun getAllFavoriteContactsOrderByAlphabet(): Flow<List<Contact>>
+
+    /**
+     * getAllFavoriteContactsOrderByInverseAlphabet() = contactFavorite1, contactFavorite2, contactFavorite3...
+     */
+    @Query("SELECT * FROM contact_db WHERE isFavorite == 1 ORDER BY firstName DESC")
+    fun getAllFavoriteContactsOrderByInverseAlphabet(): Flow<List<Contact>>
+
+    /**
      * getContactById() = contact
      */
     @Query("SELECT * FROM contact_db WHERE id = :contactId")

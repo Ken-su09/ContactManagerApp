@@ -9,6 +9,8 @@ class ContactManagerRepository @Inject constructor(private val dao: ContactDao) 
 
     val allContactsAlphabet = dao.getAllContactsOrderByAlphabet()
     val allContactsInverseAlphabet = dao.getAllContactsOrderByInverseAlphabet()
+    val allFavoriteContactsAlphabet = dao.getAllFavoriteContactsOrderByAlphabet()
+    val allFavoriteContactsInverseAlphabet = dao.getAllFavoriteContactsOrderByInverseAlphabet()
 
     fun getContactById(contactId: Int) = dao.getContactById(contactId)
 

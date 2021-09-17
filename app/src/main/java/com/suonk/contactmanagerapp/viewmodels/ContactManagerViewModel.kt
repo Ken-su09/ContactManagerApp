@@ -16,6 +16,9 @@ class ContactManagerViewModel @Inject constructor(private val repository: Contac
 
     val allContactsAlphabet = repository.allContactsAlphabet.asLiveData()
     val allContactsInverseAlphabet = repository.allContactsInverseAlphabet.asLiveData()
+    val allFavoriteContactsAlphabet = repository.allFavoriteContactsAlphabet.asLiveData()
+    val allFavoriteContactsInverseAlphabet =
+        repository.allFavoriteContactsInverseAlphabet.asLiveData()
 
     fun getContactById(contactId: Int) = repository.getContactById(contactId)
 
