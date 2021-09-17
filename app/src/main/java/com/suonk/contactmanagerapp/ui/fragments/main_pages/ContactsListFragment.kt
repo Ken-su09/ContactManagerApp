@@ -2,8 +2,10 @@ package com.suonk.contactmanagerapp.ui.fragments.main_pages
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
@@ -22,7 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class ContactsListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private var adapter = ContactsListAdapter()
+    private var contactsListAdapter = ContactsListAdapter()
     private lateinit var addNewContactButton: FloatingActionButton
 
     private val viewModel: ContactManagerViewModel by activityViewModels()
@@ -45,23 +47,28 @@ class ContactsListFragment : Fragment() {
         initRecyclerView()
 
         addNewContactButton.setOnClickListener {
-            (activity as MainActivity).startContactDetails()
+            (activity as MainActivity).startAddNewContact()
         }
 
         getContactsListFilterText()
     }
 
     private fun initRecyclerView() {
-        recyclerView.adapter = adapter
-        getContactListFromDatabase()
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.apply {
+            this.adapter = contactsListAdapter
+            getContactListFromDatabase()
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
+            setOnClickListener {
+                (activity as MainActivity).startContactDetails()
+            }
+        }
     }
 
     private fun getContactListFromDatabase() {
         viewModel.allContactsAlphabet.observe(viewLifecycleOwner, { contacts ->
             contacts.let {
-                adapter.submitList(contacts)
+                contactsListAdapter.submitList(contacts)
             }
         })
     }
@@ -81,7 +88,7 @@ class ContactsListFragment : Fragment() {
                                 listOfContactsFilter.add(contacts[i])
                             }
                         }
-                        adapter.submitList(listOfContactsFilter)
+                        contactsListAdapter.submitList(listOfContactsFilter)
                     }
                 })
             }

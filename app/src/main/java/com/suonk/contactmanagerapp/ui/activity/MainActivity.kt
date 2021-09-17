@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         coordinator.showContactDetails()
     }
 
-    private fun startAddNewContact() {
+    fun startAddNewContact() {
         coordinator.showAddNewContact()
     }
 
@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
 
                 var bitmap = ResourcesCompat.getDrawable(
                     resources,
-                    R.drawable.ic_launcher_background,
+                    R.drawable.ic_user_icon,
                     null
                 )!!.toBitmap()
 

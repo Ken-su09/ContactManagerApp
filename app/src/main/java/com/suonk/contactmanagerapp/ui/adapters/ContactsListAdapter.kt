@@ -1,12 +1,15 @@
 package com.suonk.contactmanagerapp.ui.adapters
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.toDrawable
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.suonk.contactmanagerapp.databinding.ItemContactBinding
 import com.suonk.contactmanagerapp.models.data.Contact
+import com.suonk.contactmanagerapp.ui.activity.MainActivity
 
 class ContactsListAdapter :
     ListAdapter<Contact, ContactsListAdapter.ViewHolder>(ContactsComparator()) {
@@ -26,7 +29,10 @@ class ContactsListAdapter :
 
         fun bind(contact: Contact) {
             binding.userName.text = "${contact.firstName} ${contact.lastName}"
-//            binding.userName.text = "${contact.firstName} ${contact.lastName}"
+            binding.userImage.setImageDrawable(contact.img!!.toDrawable(Resources.getSystem()))
+
+            binding.root.setOnClickListener {
+            }
         }
     }
 
