@@ -1,10 +1,12 @@
 package com.suonk.contactmanagerapp.ui.fragments.main_pages
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.databinding.FragmentGroupsBinding
 import com.suonk.contactmanagerapp.databinding.FragmentMainBinding
 import com.suonk.contactmanagerapp.ui.activity.MainActivity
@@ -33,6 +35,9 @@ class MainFragment : Fragment() {
         binding!!.viewPager.adapter =
             ViewPagerAdapter((activity as MainActivity).supportFragmentManager)
         binding!!.tabLayout.setupWithViewPager(binding!!.viewPager)
+        binding!!.tabLayout.getTabAt(0)!!.setIcon(R.drawable.ic_user)
+        binding!!.tabLayout.getTabAt(1)!!.setIcon(R.drawable.ic_star)
+        binding!!.tabLayout.getTabAt(2)!!.setIcon(R.drawable.ic_group)
     }
 
     override fun onDestroyView() {

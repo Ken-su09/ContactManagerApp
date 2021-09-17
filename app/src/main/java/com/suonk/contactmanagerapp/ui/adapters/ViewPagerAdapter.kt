@@ -29,19 +29,19 @@ class ViewPagerAdapter(fragmentManager: FragmentManager) : FragmentPagerAdapter(
         }
     }
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
             0 -> {
-                "ContactsListFragment()"
+                ""
             }
             1 -> {
-                "FavoriteContactsFragment()"
+                ""
             }
             2 -> {
-                "ContactsListFragment()"
+                ""
             }
             else -> {
-                "ContactsListFragment()"
+                ""
             }
         }
     }

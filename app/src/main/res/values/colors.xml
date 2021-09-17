@@ -12,6 +12,6 @@
     <color name="lightGrey">#eeeeee</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="almostTransparent">#44FFFFFF</color>
-    <color name="backgroundColor">#13141f</color>
+    <color name="backgroundColor">#20225a</color>
     <color name="backgroundColorPressed">#32333e</color>
 </resources>
