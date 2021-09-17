@@ -17,6 +17,8 @@ data class Contact(
     val phoneNumber: String,
     @ColumnInfo(name = "email")
     val email: String,
+    @ColumnInfo(name = "isFavorite")
+    val isFavorite: Int,
     @ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 )
