@@ -4,8 +4,9 @@ import androidx.fragment.app.FragmentActivity
 import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.ui.fragments.AddNewContactFragment
 import com.suonk.contactmanagerapp.ui.fragments.ContactDetailsFragment
-import com.suonk.contactmanagerapp.ui.fragments.ContactsListFragment
+import com.suonk.contactmanagerapp.ui.fragments.main_pages.ContactsListFragment
 import com.suonk.contactmanagerapp.ui.fragments.SplashScreenFragment
+import com.suonk.contactmanagerapp.ui.fragments.main_pages.MainFragment
 import javax.inject.Inject
 
 class Navigator @Inject constructor(var activity: FragmentActivity?) {
@@ -20,7 +21,7 @@ class Navigator @Inject constructor(var activity: FragmentActivity?) {
     fun showContactsList() {
         activity!!.supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container_view, ContactsListFragment())
+            .replace(R.id.fragment_container_view, MainFragment())
             .commit()
     }
 

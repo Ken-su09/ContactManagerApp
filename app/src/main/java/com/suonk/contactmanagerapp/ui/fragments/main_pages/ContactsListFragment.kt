@@ -1,4 +1,4 @@
-package com.suonk.contactmanagerapp.ui.fragments
+package com.suonk.contactmanagerapp.ui.fragments.main_pages
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,7 +24,6 @@ class ContactsListFragment : Fragment() {
     private lateinit var editText: AppCompatEditText
     private var adapter = ContactsListAdapter()
     private lateinit var addNewContactButton: FloatingActionButton
-    private lateinit var importContactsButton: AppCompatImageView
 
     private val viewModel: ContactManagerViewModel by activityViewModels()
 
@@ -45,9 +44,8 @@ class ContactsListFragment : Fragment() {
 
     private fun initializeUI() {
         recyclerView = binding!!.recyclerView
-        editText = binding!!.searchContactEditText
+//        editText = binding!!.searchContactEditText
         addNewContactButton = binding!!.addNewContactButton
-        importContactsButton = binding!!.importContacts
 
         initRecyclerView()
 

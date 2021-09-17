@@ -16,11 +16,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.viewpager.widget.PagerAdapter
 import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.databinding.ActivityMainBinding
 import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.navigation.ContactManagerCoordinator
 import com.suonk.contactmanagerapp.navigation.Navigator
+import com.suonk.contactmanagerapp.ui.adapters.ViewPagerAdapter
 import com.suonk.contactmanagerapp.viewmodels.ContactManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
@@ -67,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startContactsList() {
-        if(!isContactsAlreadyImported){
+        if (!isContactsAlreadyImported) {
             loadContacts()
         }
         coordinator.showContactsList()
