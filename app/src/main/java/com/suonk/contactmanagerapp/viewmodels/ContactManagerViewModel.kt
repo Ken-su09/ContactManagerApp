@@ -1,6 +1,7 @@
 package com.suonk.contactmanagerapp.viewmodels
 
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ContactManagerViewModel @Inject constructor(private val repository: ContactManagerRepository) :
     ViewModel() {
+
+    //region ===================================== Database Operations ======================================
 
     val allContactsAlphabet = repository.allContactsAlphabet.asLiveData()
     val allContactsInverseAlphabet = repository.allContactsInverseAlphabet.asLiveData()
@@ -33,4 +36,14 @@ class ContactManagerViewModel @Inject constructor(private val repository: Contac
     suspend fun deleteContact(contact: Contact) = viewModelScope.launch {
         repository.deleteContact(contact)
     }
+    //endregion
+
+    //region ==================================== Data Between Fragments ====================================
+
+    val searchBarText = MutableLiveData<String>()
+    fun setSearchBarText(text: String) {
+        searchBarText.value = text
+    }
+
+    //endregion
 }

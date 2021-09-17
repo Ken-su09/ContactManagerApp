@@ -1,23 +1,28 @@
 package com.suonk.contactmanagerapp.ui.fragments.main_pages
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.databinding.FragmentMainBinding
 import com.suonk.contactmanagerapp.ui.activity.MainActivity
 import com.suonk.contactmanagerapp.ui.adapters.ViewPagerAdapter
+import com.suonk.contactmanagerapp.viewmodels.ContactManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
     private var binding: FragmentMainBinding? = null
+
+    private val viewModel: ContactManagerViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,6 +35,21 @@ class MainFragment : Fragment() {
 
     private fun initializeUI() {
         setupViewPager()
+        searchBarTextListener()
+    }
+
+    private fun searchBarTextListener() {
+        binding!!.searchContactEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setSearchBarText(binding!!.searchContactEditText.text.toString())
+            }
+        })
     }
 
     private fun setupViewPager() {

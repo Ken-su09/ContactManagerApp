@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.suonk.contactmanagerapp.databinding.FragmentContactsListBinding
+import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.ui.activity.MainActivity
 import com.suonk.contactmanagerapp.ui.adapters.ContactsListAdapter
 import com.suonk.contactmanagerapp.viewmodels.ContactManagerViewModel
@@ -21,17 +22,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class ContactsListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private lateinit var editText: AppCompatEditText
     private var adapter = ContactsListAdapter()
     private lateinit var addNewContactButton: FloatingActionButton
 
     private val viewModel: ContactManagerViewModel by activityViewModels()
 
     private var binding: FragmentContactsListBinding? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +40,6 @@ class ContactsListFragment : Fragment() {
 
     private fun initializeUI() {
         recyclerView = binding!!.recyclerView
-//        editText = binding!!.searchContactEditText
         addNewContactButton = binding!!.addNewContactButton
 
         initRecyclerView()
@@ -52,6 +47,8 @@ class ContactsListFragment : Fragment() {
         addNewContactButton.setOnClickListener {
             (activity as MainActivity).startContactDetails()
         }
+
+        getContactsListFilterText()
     }
 
     private fun initRecyclerView() {
@@ -65,6 +62,28 @@ class ContactsListFragment : Fragment() {
         viewModel.allContactsAlphabet.observe(viewLifecycleOwner, { contacts ->
             contacts.let {
                 adapter.submitList(contacts)
+            }
+        })
+    }
+
+    private fun getContactsListFilterText() {
+        viewModel.allContactsAlphabet.observe(viewLifecycleOwner, { contacts ->
+            contacts.let {
+                viewModel.searchBarText.observe(viewLifecycleOwner, { searchBarText ->
+                    if (searchBarText != "" || searchBarText.isEmpty()) {
+                        val listOfContactsFilter = mutableListOf<Contact>()
+                        for (i in contacts.indices) {
+                            if (contacts[i].firstName.contains(searchBarText) ||
+                                contacts[i].lastName.contains(searchBarText) ||
+                                contacts[i].firstName.contains(searchBarText.lowercase()) ||
+                                contacts[i].lastName.contains(searchBarText.lowercase())
+                            ) {
+                                listOfContactsFilter.add(contacts[i])
+                            }
+                        }
+                        adapter.submitList(listOfContactsFilter)
+                    }
+                })
             }
         })
     }
