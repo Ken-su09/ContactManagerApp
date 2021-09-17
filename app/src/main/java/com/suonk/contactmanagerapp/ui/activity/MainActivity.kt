@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.ContactsContract
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -22,7 +23,6 @@ import com.suonk.contactmanagerapp.databinding.ActivityMainBinding
 import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.navigation.ContactManagerCoordinator
 import com.suonk.contactmanagerapp.navigation.Navigator
-import com.suonk.contactmanagerapp.ui.adapters.ViewPagerAdapter
 import com.suonk.contactmanagerapp.viewmodels.ContactManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
@@ -149,6 +149,10 @@ class MainActivity : AppCompatActivity() {
                     cursorPhone.close()
                 }
 
+                val isFavorite =
+                    cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.STARRED))
+                Log.i("MainActivity", "$isFavorite")
+
                 var bitmap = ResourcesCompat.getDrawable(
                     resources,
                     R.drawable.ic_launcher_background,
@@ -175,7 +179,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 val contact = Contact(
-                    name, "", bitmap, phoneNumValue, ""
+                    name, "", bitmap, phoneNumValue, "", isFavorite
                 )
                 viewModel.addNewContact(contact)
             }
