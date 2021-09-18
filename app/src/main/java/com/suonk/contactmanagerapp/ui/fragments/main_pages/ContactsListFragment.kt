@@ -1,6 +1,7 @@
 package com.suonk.contactmanagerapp.ui.fragments.main_pages
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -24,10 +25,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class ContactsListFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private var contactsListAdapter = ContactsListAdapter()
+    private lateinit var contactsListAdapter: ContactsListAdapter
     private lateinit var addNewContactButton: FloatingActionButton
 
     private val viewModel: ContactManagerViewModel by activityViewModels()
+    private val listOfContacts = mutableListOf<Contact>()
 
     private var binding: FragmentContactsListBinding? = null
 
@@ -43,6 +45,7 @@ class ContactsListFragment : Fragment() {
     private fun initializeUI() {
         recyclerView = binding!!.recyclerView
         addNewContactButton = binding!!.addNewContactButton
+        contactsListAdapter = ContactsListAdapter(this)
 
         initRecyclerView()
 
@@ -59,14 +62,12 @@ class ContactsListFragment : Fragment() {
             getContactListFromDatabase()
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(context)
-            setOnClickListener {
-                (activity as MainActivity).startContactDetails()
-            }
         }
     }
 
     private fun getContactListFromDatabase() {
         viewModel.allContactsAlphabet.observe(viewLifecycleOwner, { contacts ->
+            listOfContacts.addAll(contacts)
             contacts.let {
                 contactsListAdapter.submitList(contacts)
             }
@@ -93,6 +94,11 @@ class ContactsListFragment : Fragment() {
                 })
             }
         })
+    }
+
+    fun goToContactDetails(position: Int) {
+        viewModel.setContactLiveData(listOfContacts[position])
+        (activity as MainActivity).startContactDetails()
     }
 
     override fun onDestroyView() {

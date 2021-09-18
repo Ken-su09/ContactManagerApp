@@ -45,5 +45,10 @@ class ContactManagerViewModel @Inject constructor(private val repository: Contac
         searchBarText.value = text
     }
 
+    val contactLiveData = MutableLiveData<Contact>()
+    fun setContactLiveData(contact: Contact) {
+        contactLiveData.value = contact
+    }
+
     //endregion
 }

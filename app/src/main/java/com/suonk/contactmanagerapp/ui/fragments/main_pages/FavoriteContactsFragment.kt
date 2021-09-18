@@ -14,6 +14,7 @@ import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.databinding.FragmentFavoriteContactsBinding
 import com.suonk.contactmanagerapp.databinding.FragmentGroupsBinding
 import com.suonk.contactmanagerapp.models.data.Contact
+import com.suonk.contactmanagerapp.ui.activity.MainActivity
 import com.suonk.contactmanagerapp.ui.adapters.ContactsListAdapter
 import com.suonk.contactmanagerapp.viewmodels.ContactManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,10 +23,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class FavoriteContactsFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
-    private var adapter = ContactsListAdapter()
+    private lateinit var contactsListAdapter: ContactsListAdapter
     private lateinit var addNewContactButton: FloatingActionButton
 
     private val viewModel: ContactManagerViewModel by activityViewModels()
+    private val listOfContacts = mutableListOf<Contact>()
 
     private var binding: FragmentFavoriteContactsBinding? = null
 
@@ -41,8 +43,7 @@ class FavoriteContactsFragment : Fragment() {
     private fun initializeUI() {
         recyclerView = binding!!.recyclerView
         addNewContactButton = binding!!.addNewContactButton
-        recyclerView = binding!!.recyclerView
-        recyclerView = binding!!.recyclerView
+        contactsListAdapter = ContactsListAdapter(this)
 
         initRecyclerView()
 
@@ -50,7 +51,7 @@ class FavoriteContactsFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        recyclerView.adapter = adapter
+        recyclerView.adapter = contactsListAdapter
         getFavoriteContactsFromDatabase()
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(context)
@@ -58,8 +59,9 @@ class FavoriteContactsFragment : Fragment() {
 
     private fun getFavoriteContactsFromDatabase() {
         viewModel.allFavoriteContactsAlphabet.observe(viewLifecycleOwner, { favoriteContacts ->
+            listOfContacts.addAll(favoriteContacts)
             favoriteContacts.let {
-                adapter.submitList(favoriteContacts)
+                contactsListAdapter.submitList(favoriteContacts)
             }
         })
     }
@@ -79,11 +81,16 @@ class FavoriteContactsFragment : Fragment() {
                                 listOfContactsFilter.add(contacts[i])
                             }
                         }
-                        adapter.submitList(listOfContactsFilter)
+                        contactsListAdapter.submitList(listOfContactsFilter)
                     }
                 })
             }
         })
+    }
+
+    fun goToContactDetails(position: Int) {
+        viewModel.setContactLiveData(listOfContacts[position])
+        (activity as MainActivity).startContactDetails()
     }
 
     override fun onDestroyView() {
