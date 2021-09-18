@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.repositories.ContactManagerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,11 +30,11 @@ class ContactManagerViewModel @Inject constructor(private val repository: Contac
         repository.addNewContact(contact)
     }
 
-    suspend fun updateContact(contact: Contact) = viewModelScope.launch {
+    fun updateContact(contact: Contact) = viewModelScope.launch(Dispatchers.IO) {
         repository.updateContact(contact)
     }
 
-    suspend fun deleteContact(contact: Contact) = viewModelScope.launch {
+    fun deleteContact(contact: Contact) = viewModelScope.launch {
         repository.deleteContact(contact)
     }
     //endregion

@@ -1,6 +1,8 @@
 package com.suonk.contactmanagerapp.ui.fragments
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
@@ -36,15 +38,18 @@ class ContactDetailsFragment : Fragment() {
         editContactClick()
         whatsappLayoutClick()
         callLayoutClick()
+        backToContactsList()
     }
 
     private fun getContactFromViewModel() {
         viewModel.contactLiveData.observe(viewLifecycleOwner, { contact ->
-            binding!!.userImage.setImageDrawable(contact.img!!.toDrawable(Resources.getSystem()))
-            binding!!.userName.text = "${contact.firstName} ${contact.lastName}"
-            binding!!.contactNameValue.text = "${contact.firstName} ${contact.lastName}"
-            binding!!.contactEmailValue.text = "${contact.email}"
-            binding!!.contactPhoneNumberValue.text = "${contact.phoneNumber}"
+            binding!!.apply {
+                userImage.setImageDrawable(contact.img!!.toDrawable(Resources.getSystem()))
+                userName.text = "${contact.firstName} ${contact.lastName}"
+                contactNameValue.text = "${contact.firstName} ${contact.lastName}"
+                contactEmailValue.text = "${contact.email}"
+                contactPhoneNumberValue.text = "${contact.phoneNumber}"
+            }
         })
     }
 
@@ -61,6 +66,12 @@ class ContactDetailsFragment : Fragment() {
     private fun editContactClick() {
         binding!!.editLayout.setOnClickListener {
             (activity as MainActivity).startEditContact()
+        }
+    }
+
+    private fun backToContactsList() {
+        binding!!.backToContactsList.setOnClickListener {
+            (activity as MainActivity).startContactsList()
         }
     }
 

@@ -1,6 +1,7 @@
 package com.suonk.contactmanagerapp.ui.activity
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.content.Context
@@ -30,7 +31,9 @@ import java.io.InputStream
 import javax.inject.Inject
 import android.content.Intent
 import android.net.Uri
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
+import de.hdodenhof.circleimageview.CircleImageView
 
 
 @AndroidEntryPoint
@@ -39,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val PERMISSIONS_REQUEST_READ_CONTACTS = 100
         const val PERMISSIONS_REQUEST_CALL_PHONE = 101
+        const val REQUEST_CODE = 102
         const val PERMISSION_ALL = 1
         val PERMISSIONS = arrayOf(
             Manifest.permission.READ_CONTACTS,
@@ -58,6 +62,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
     private var isContactsAlreadyImported = false
+
+    private lateinit var circleImageView: CircleImageView
 
     private val viewModel: ContactManagerViewModel by viewModels()
 
@@ -82,10 +88,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun startSplashScreen() {
         coordinator.showSplashScreen()
+        ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL)
     }
 
-    private fun startContactsList() {
-        ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL)
+    fun startContactsList() {
         coordinator.showContactsList()
     }
 
@@ -217,6 +223,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun openGalleryForImage(civ: CircleImageView) {
+        circleImageView = civ
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_CODE)
+    }
+
     //endregion
 
     //region ========================================= Permissions ==========================================
@@ -225,11 +238,15 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.i("onRequestPermissionsResult", "$requestCode")
-        Log.i("onRequestPermissionsResult", "$permissions")
-        Log.i("onRequestPermissionsResult", "$grantResults")
         if (!isContactsAlreadyImported) {
             loadContacts()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+            circleImageView.setImageURI(data?.data)
         }
     }
 

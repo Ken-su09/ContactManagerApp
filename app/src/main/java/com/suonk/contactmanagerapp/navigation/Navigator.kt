@@ -37,7 +37,6 @@ class Navigator @Inject constructor(var activity: FragmentActivity?) {
         activity!!.supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container_view, EditContactFragment())
-            .addToBackStack(null)
             .commit()
     }
 

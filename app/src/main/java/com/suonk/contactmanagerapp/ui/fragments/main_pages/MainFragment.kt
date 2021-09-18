@@ -64,7 +64,11 @@ class MainFragment : Fragment() {
                     tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_user, null)
                 }
                 1 -> {
-                    tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_star, null)
+                    tab.icon = ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ic_star_selected,
+                        null
+                    )
                 }
                 2 -> {
                     tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_group, null)

@@ -92,7 +92,7 @@ class ContactsListFragment : Fragment() {
     }
 
     fun goToContactDetails(position: Int) {
-        viewModel.setContactLiveData(listOfContacts[position + 1])
+        viewModel.setContactLiveData(listOfContacts[position])
         (activity as MainActivity).startContactDetails()
     }
 
