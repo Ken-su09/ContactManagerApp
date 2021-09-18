@@ -30,6 +30,7 @@ import java.io.InputStream
 import javax.inject.Inject
 import android.content.Intent
 import android.net.Uri
+import androidx.core.app.ActivityCompat
 
 
 @AndroidEntryPoint
@@ -37,6 +38,16 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val PERMISSIONS_REQUEST_READ_CONTACTS = 100
+        const val PERMISSIONS_REQUEST_CALL_PHONE = 101
+        const val PERMISSION_ALL = 1
+        val PERMISSIONS = arrayOf(
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.CALL_PHONE,
+            Manifest.permission.WRITE_CONTACTS,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_SMS,
+            Manifest.permission.CAMERA
+        )
     }
 
     @Inject
@@ -67,14 +78,14 @@ class MainActivity : AppCompatActivity() {
         }, 5000)
     }
 
+    //region ======================================= Start Fragments ========================================
+
     private fun startSplashScreen() {
         coordinator.showSplashScreen()
     }
 
     private fun startContactsList() {
-        if (!isContactsAlreadyImported) {
-            loadContacts()
-        }
+        ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL)
         coordinator.showContactsList()
     }
 
@@ -90,20 +101,9 @@ class MainActivity : AppCompatActivity() {
         coordinator.showAddNewContact()
     }
 
-    fun openWhatsapp(phoneNumber: String) {
-        val url =
-            "https://api.whatsapp.com/send?phone=${convertNumberToWhatsappNumber(phoneNumber)}"
-        val i = Intent(Intent.ACTION_VIEW)
-        i.data = Uri.parse(url)
-        startActivity(i)
-    }
+    //endregion
 
-    private fun convertNumberToWhatsappNumber(phoneNumber: String): String {
-        if (phoneNumber[0] == '0') {
-            return "+33$phoneNumber"
-        }
-        return phoneNumber
-    }
+    //region ==================================== Phone Functionalities =====================================
 
     private fun loadContacts() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
@@ -121,27 +121,6 @@ class MainActivity : AppCompatActivity() {
             edit.putBoolean("contacts_already_imported", true)
             edit.apply()
         }
-    }
-
-    override fun onBackPressed() {
-        val count = supportFragmentManager.backStackEntryCount
-        if (count == 0) {
-            super.onBackPressed()
-        } else {
-            supportFragmentManager.popBackStack()
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                loadContacts()
-            }
-        }
-
     }
 
     private fun getContacts() {
@@ -217,6 +196,52 @@ class MainActivity : AppCompatActivity() {
         }
 
         cursor.close()
+    }
+
+    fun phoneCall(phoneNumber: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
+                Manifest.permission.CALL_PHONE
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.CALL_PHONE),
+                PERMISSIONS_REQUEST_CALL_PHONE
+            )
+        } else {
+            if (phoneNumber.isNotEmpty() || phoneNumber != "") {
+                val intent = Intent(Intent.ACTION_CALL)
+                intent.data = Uri.parse("tel:$phoneNumber")
+                startActivity(intent)
+            }
+        }
+    }
+
+    //endregion
+
+    //region ========================================= Permissions ==========================================
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.i("onRequestPermissionsResult", "$requestCode")
+        Log.i("onRequestPermissionsResult", "$permissions")
+        Log.i("onRequestPermissionsResult", "$grantResults")
+        if (!isContactsAlreadyImported) {
+            loadContacts()
+        }
+    }
+
+    //endregion
+
+    override fun onBackPressed() {
+        val count = supportFragmentManager.backStackEntryCount
+        if (count == 0) {
+            super.onBackPressed()
+        } else {
+            supportFragmentManager.popBackStack()
+        }
     }
 
     override fun onDestroy() {

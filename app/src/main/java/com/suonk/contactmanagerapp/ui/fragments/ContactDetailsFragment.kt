@@ -1,6 +1,8 @@
 package com.suonk.contactmanagerapp.ui.fragments
 
+import android.content.Intent
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,6 +35,7 @@ class ContactDetailsFragment : Fragment() {
 
         editContactClick()
         whatsappLayoutClick()
+        callLayoutClick()
     }
 
     private fun getContactFromViewModel() {
@@ -49,8 +52,9 @@ class ContactDetailsFragment : Fragment() {
 
     private fun whatsappLayoutClick() {
         binding!!.whatsappLayout.setOnClickListener {
-            if (binding!!.contactPhoneNumberValue.text.isNotEmpty())
-                (activity as MainActivity).openWhatsapp(binding!!.contactPhoneNumberValue.text.toString())
+            if (binding!!.contactPhoneNumberValue.text.isNotEmpty()) {
+                openWhatsapp(binding!!.contactPhoneNumberValue.text.toString())
+            }
         }
     }
 
@@ -58,6 +62,33 @@ class ContactDetailsFragment : Fragment() {
         binding!!.editLayout.setOnClickListener {
             (activity as MainActivity).startEditContact()
         }
+    }
+
+    private fun callLayoutClick() {
+        binding!!.callLayout.setOnClickListener {
+            if (binding!!.contactPhoneNumberValue.text.isNotEmpty()) {
+                (activity as MainActivity).phoneCall(binding!!.contactPhoneNumberValue.text.toString())
+            }
+        }
+    }
+
+    //endregion
+
+    //region ==================================== Phone Functionalities =====================================
+
+    private fun openWhatsapp(phoneNumber: String) {
+        val url =
+            "https://api.whatsapp.com/send?phone=${convertNumberToWhatsappNumber(phoneNumber)}"
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(i)
+    }
+
+    private fun convertNumberToWhatsappNumber(phoneNumber: String): String {
+        if (phoneNumber[0] == '0') {
+            return "+33$phoneNumber"
+        }
+        return phoneNumber
     }
 
     //endregion
