@@ -28,6 +28,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
 import java.io.InputStream
 import javax.inject.Inject
+import android.content.Intent
+import android.net.Uri
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -79,8 +82,27 @@ class MainActivity : AppCompatActivity() {
         coordinator.showContactDetails()
     }
 
+    fun startEditContact() {
+        coordinator.showEditContact()
+    }
+
     fun startAddNewContact() {
         coordinator.showAddNewContact()
+    }
+
+    fun openWhatsapp(phoneNumber: String) {
+        val url =
+            "https://api.whatsapp.com/send?phone=${convertNumberToWhatsappNumber(phoneNumber)}"
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(i)
+    }
+
+    private fun convertNumberToWhatsappNumber(phoneNumber: String): String {
+        if (phoneNumber[0] == '0') {
+            return "+33$phoneNumber"
+        }
+        return phoneNumber
     }
 
     private fun loadContacts() {
