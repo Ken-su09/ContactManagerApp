@@ -59,6 +59,7 @@ class FavoriteContactsFragment : Fragment() {
 
     private fun getFavoriteContactsFromDatabase() {
         viewModel.allFavoriteContactsAlphabet.observe(viewLifecycleOwner, { favoriteContacts ->
+            listOfContacts.clear()
             listOfContacts.addAll(favoriteContacts)
             favoriteContacts.let {
                 contactsListAdapter.submitList(favoriteContacts)
@@ -81,6 +82,8 @@ class FavoriteContactsFragment : Fragment() {
                                 listOfContactsFilter.add(contacts[i])
                             }
                         }
+                        listOfContacts.clear()
+                        listOfContacts.addAll(listOfContactsFilter)
                         contactsListAdapter.submitList(listOfContactsFilter)
                     }
                 })
@@ -89,7 +92,10 @@ class FavoriteContactsFragment : Fragment() {
     }
 
     fun goToContactDetails(position: Int) {
-        viewModel.setContactLiveData(listOfContacts[position])
+        viewModel.apply {
+            setContactLiveData(listOfContacts[position])
+            setSearchBarText("")
+        }
         (activity as MainActivity).startContactDetails()
     }
 

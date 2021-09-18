@@ -62,9 +62,10 @@ class ContactsListFragment : Fragment() {
 
     private fun getContactListFromDatabase() {
         viewModel.allContactsAlphabet.observe(viewLifecycleOwner, { contacts ->
+            listOfContacts.clear()
             listOfContacts.addAll(contacts)
             contacts.let {
-                contactsListAdapter.submitList(contacts)
+                contactsListAdapter.submitList(listOfContacts)
             }
         })
     }
@@ -84,6 +85,8 @@ class ContactsListFragment : Fragment() {
                                 listOfContactsFilter.add(contacts[i])
                             }
                         }
+                        listOfContacts.clear()
+                        listOfContacts.addAll(listOfContactsFilter)
                         contactsListAdapter.submitList(listOfContactsFilter)
                     }
                 })
@@ -92,7 +95,11 @@ class ContactsListFragment : Fragment() {
     }
 
     fun goToContactDetails(position: Int) {
-        viewModel.setContactLiveData(listOfContacts[position])
+        viewModel.apply {
+//            recyclerView.getPosition
+            setContactLiveData(listOfContacts[position])
+            setSearchBarText("")
+        }
         (activity as MainActivity).startContactDetails()
     }
 
