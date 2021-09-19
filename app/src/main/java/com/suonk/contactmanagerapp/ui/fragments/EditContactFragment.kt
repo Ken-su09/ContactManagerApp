@@ -1,5 +1,8 @@
 package com.suonk.contactmanagerapp.ui.fragments
 
+import android.content.Context
+import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +12,8 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.databinding.FragmentEditContactBinding
 import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.ui.activity.MainActivity
@@ -24,6 +29,10 @@ class EditContactFragment : Fragment() {
     private var isFavorite = 0
     private var contactId = -1
 
+    private lateinit var sharedPreferences: SharedPreferences
+
+    private lateinit var editContact: Contact
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,10 +47,17 @@ class EditContactFragment : Fragment() {
         changeImageClick()
         favoriteIconClick()
         updateUserClick()
+        deleteContactClick()
+
+        sharedPreferences = (activity as MainActivity).getSharedPreferences(
+            "is_contact_deleted",
+            Context.MODE_PRIVATE
+        )
     }
 
     private fun getContactFromViewModel() {
         viewModel.contactLiveData.observe(viewLifecycleOwner, { contact ->
+            editContact = contact
             binding!!.apply {
                 userImage.setImageDrawable(contact.img!!.toDrawable(Resources.getSystem()))
                 userName.text = "${contact.firstName} ${contact.lastName}"
@@ -100,6 +116,30 @@ class EditContactFragment : Fragment() {
             viewModel.updateContact(contact)
             viewModel.setContactLiveData(contact)
             (activity as MainActivity).startContactDetails()
+        }
+    }
+
+    private fun deleteContactClick() {
+        binding!!.deleteContact.setOnClickListener {
+            MaterialAlertDialogBuilder(
+                requireContext(),
+                R.style.AlertDialog
+            )
+                .setTitle("You are gonna delete this contact")
+                .setPositiveButton("Delete") { _, _ ->
+                    viewModel.deleteContact(editContact)
+
+                    val edit = sharedPreferences.edit()
+                    edit.putBoolean("is_contact_deleted", true)
+                    edit.apply()
+
+                    requireActivity().supportFragmentManager.popBackStack()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                    dialog.cancel()
+                }
+                .show()
         }
     }
 

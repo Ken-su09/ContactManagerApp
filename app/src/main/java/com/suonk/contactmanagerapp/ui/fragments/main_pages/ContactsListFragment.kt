@@ -1,6 +1,9 @@
 package com.suonk.contactmanagerapp.ui.fragments.main_pages
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +29,8 @@ class ContactsListFragment : Fragment() {
     private val viewModel: ContactManagerViewModel by activityViewModels()
     private val listOfContacts = mutableListOf<Contact>()
 
+    private lateinit var sharedPreferences: SharedPreferences
+
     private var binding: FragmentContactsListBinding? = null
 
     override fun onCreateView(
@@ -40,15 +45,21 @@ class ContactsListFragment : Fragment() {
     private fun initializeUI() {
         recyclerView = binding!!.recyclerView
         addNewContactButton = binding!!.addNewContactButton
-        contactsListAdapter = ContactsListAdapter(this)
-
-        initRecyclerView()
 
         addNewContactButton.setOnClickListener {
             (activity as MainActivity).startAddNewContact()
         }
 
+        sharedPreferences = (activity as MainActivity).getSharedPreferences(
+            "is_contact_deleted",
+            Context.MODE_PRIVATE
+        )
+
         getContactsListFilterText()
+        
+        contactsListAdapter = ContactsListAdapter(this)
+
+        initRecyclerView()
     }
 
     private fun initRecyclerView() {
@@ -92,11 +103,14 @@ class ContactsListFragment : Fragment() {
                 })
             }
         })
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("is_contact_deleted", false)
+        edit.apply()
     }
 
     fun goToContactDetails(position: Int) {
         viewModel.apply {
-//            recyclerView.getPosition
             setContactLiveData(listOfContacts[position])
             setSearchBarText("")
         }

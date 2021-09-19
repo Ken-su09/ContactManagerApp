@@ -23,6 +23,9 @@ class ContactDetailsFragment : Fragment() {
     private var binding: FragmentContactDetailsBinding? = null
     private val viewModel: ContactManagerViewModel by activityViewModels()
 
+    private lateinit var sharedPreferences: SharedPreferences
+    private var isContactDeleted = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,6 +42,16 @@ class ContactDetailsFragment : Fragment() {
         whatsappLayoutClick()
         callLayoutClick()
         backToContactsList()
+
+        sharedPreferences = (activity as MainActivity).getSharedPreferences(
+            "is_contact_deleted",
+            Context.MODE_PRIVATE
+        )
+        isContactDeleted = sharedPreferences.getBoolean("is_contact_deleted", false)
+
+        if (isContactDeleted) {
+            contactIsDeleted()
+        }
     }
 
     private fun getContactFromViewModel() {
@@ -86,6 +99,14 @@ class ContactDetailsFragment : Fragment() {
     //endregion
 
     //region ==================================== Phone Functionalities =====================================
+
+    private fun contactIsDeleted() {
+        requireActivity().supportFragmentManager.popBackStack()
+
+        val edit = sharedPreferences.edit()
+        edit.putBoolean("is_contact_deleted", false)
+        edit.apply()
+    }
 
     private fun openWhatsapp(phoneNumber: String) {
         val url =

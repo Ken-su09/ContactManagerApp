@@ -40,6 +40,7 @@ class ContactsListAdapter(private val fragment: Fragment) :
             binding.userImage.setImageDrawable(contact.img!!.toDrawable(Resources.getSystem()))
 
             binding.root.setOnClickListener {
+                Log.i("getContactsList", "${fragment.tag}")
                 when (fragment.tag) {
                     "f0" -> (fragment as ContactsListFragment).goToContactDetails(position)
                     "f1" -> (fragment as FavoriteContactsFragment).goToContactDetails(position)
