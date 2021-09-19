@@ -24,7 +24,7 @@ class ContactManagerCoordinator @Inject constructor(private val navigator: Navig
         navigator.showAddNewContact()
     }
 
-    fun showAllMessagesContact() {
-        navigator.startAllMessagesContact()
+    fun showChatMessaging() {
+        navigator.startChatMessaging()
     }
 }

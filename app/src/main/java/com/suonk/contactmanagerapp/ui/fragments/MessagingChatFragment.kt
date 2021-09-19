@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.suonk.contactmanagerapp.R
-import com.suonk.contactmanagerapp.databinding.FragmentAllMessagesBinding
+import com.suonk.contactmanagerapp.databinding.FragmentMessagingChatBinding
 import com.suonk.contactmanagerapp.models.data.Contact
 import com.suonk.contactmanagerapp.models.data.Message
 import com.suonk.contactmanagerapp.ui.adapters.MessagesListAdapter
@@ -18,7 +18,7 @@ import com.suonk.contactmanagerapp.viewmodels.MessageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AllMessagesFragment : Fragment() {
+class MessagingChatFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var messagesListAdapter: MessagesListAdapter
@@ -27,13 +27,13 @@ class AllMessagesFragment : Fragment() {
     private val messageViewModel: MessageViewModel by activityViewModels()
     private val contactViewModel: ContactManagerViewModel by activityViewModels()
 
-    private var binding: FragmentAllMessagesBinding? = null
+    private var binding: FragmentMessagingChatBinding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAllMessagesBinding.inflate(inflater, container, false)
+        binding = FragmentMessagingChatBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 

@@ -99,7 +99,7 @@ class MessagesListFragment : Fragment() {
         messageViewModel.apply {
             setContactIdLiveData(listOfMessages[position].id)
         }
-        (activity as MainActivity).startAllMessagesContact()
+        (activity as MainActivity).startChatMessaging()
     }
 
     override fun onDestroyView() {

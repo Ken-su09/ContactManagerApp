@@ -46,10 +46,10 @@ class Navigator @Inject constructor(var activity: FragmentActivity?) {
             .commit()
     }
 
-    fun startAllMessagesContact() {
+    fun startChatMessaging() {
         activity!!.supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container_view, AllMessagesFragment())
+            .replace(R.id.fragment_container_view, MessagingChatFragment())
             .addToBackStack(null)
             .commit()
     }

@@ -18,7 +18,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.viewpager.widget.PagerAdapter
 import com.suonk.contactmanagerapp.R
 import com.suonk.contactmanagerapp.databinding.ActivityMainBinding
 import com.suonk.contactmanagerapp.models.data.Contact
@@ -31,19 +30,24 @@ import java.io.InputStream
 import javax.inject.Inject
 import android.content.Intent
 import android.net.Uri
-import androidx.appcompat.widget.AppCompatImageView
+import android.provider.Telephony
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.hdodenhof.circleimageview.CircleImageView
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<Object> {
 
     companion object {
         const val PERMISSIONS_REQUEST_READ_CONTACTS = 100
         const val PERMISSIONS_REQUEST_CALL_PHONE = 101
         const val REQUEST_CODE = 102
         const val PERMISSION_ALL = 1
+        const val ALL_SMS_LOADER = 123
         val PERMISSIONS = arrayOf(
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.CALL_PHONE,
@@ -109,8 +113,8 @@ class MainActivity : AppCompatActivity() {
         coordinator.showAddNewContact()
     }
 
-    fun startAllMessagesContact() {
-        coordinator.showAllMessagesContact()
+    fun startChatMessaging() {
+        coordinator.showChatMessaging()
     }
 
     //endregion
@@ -244,6 +248,7 @@ class MainActivity : AppCompatActivity() {
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        checkDefaultSettings()
         if (!isContactsAlreadyImported) {
             loadContacts()
         }
@@ -256,7 +261,46 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun checkDefaultSettings(): Boolean {
+        val isDefault: Boolean
+
+        if (!Telephony.Sms.getDefaultSmsPackage(this).equals(packageName)) {
+
+            MaterialAlertDialogBuilder(this, R.style.AlertDialog)
+                .setMessage("This app is not set as your default messaging app. Do you want to set it as default?")
+                .setPositiveButton("Yes") { _, _ ->
+                    val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT)
+                    intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+                    startActivity(intent)
+                    checkPermissions()
+                }
+                .setNegativeButton("No") { dialog, _ ->
+                    checkPermissions()
+                    dialog.dismiss()
+                    dialog.cancel()
+                }
+                .show()
+            isDefault = false
+        } else
+            isDefault = true
+        return isDefault
+    }
+
+    private fun checkPermissions() {
+        supportLoaderManager.initLoader(ALL_SMS_LOADER, null, this);
+    }
+
     //endregion
+
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<Object> {
+        return Loader(this)
+    }
+
+    override fun onLoadFinished(loader: Loader<Object>, data: Object?) {
+    }
+
+    override fun onLoaderReset(loader: Loader<Object>) {
+    }
 
     override fun onBackPressed() {
         val count = supportFragmentManager.backStackEntryCount
