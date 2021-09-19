@@ -56,7 +56,7 @@ class ContactsListFragment : Fragment() {
         )
 
         getContactsListFilterText()
-        
+
         contactsListAdapter = ContactsListAdapter(this)
 
         initRecyclerView()
