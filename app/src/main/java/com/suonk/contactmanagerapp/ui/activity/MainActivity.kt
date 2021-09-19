@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.WRITE_CONTACTS,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_SMS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.RECEIVE_SMS,
             Manifest.permission.CAMERA
         )
     }
@@ -105,6 +107,10 @@ class MainActivity : AppCompatActivity() {
 
     fun startAddNewContact() {
         coordinator.showAddNewContact()
+    }
+
+    fun startAllMessagesContact() {
+        coordinator.showAllMessagesContact()
     }
 
     //endregion

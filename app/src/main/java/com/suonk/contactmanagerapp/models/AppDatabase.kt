@@ -7,11 +7,13 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.suonk.contactmanagerapp.models.dao.ContactDao
+import com.suonk.contactmanagerapp.models.dao.MessageDao
 import com.suonk.contactmanagerapp.models.data.Contact
+import com.suonk.contactmanagerapp.models.data.Message
 import com.suonk.contactmanagerapp.utils.Converters
 
 @Database(
-    entities = [Contact::class],
+    entities = [Contact::class, Message::class],
     version = 2,
     exportSchema = false
 )
@@ -19,10 +21,5 @@ import com.suonk.contactmanagerapp.utils.Converters
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun contactDao(): ContactDao
-
-    var MIGRATION_1_2 = object : Migration(1, 2) {
-        override fun migrate(database: SupportSQLiteDatabase) {
-            database.execSQL("ALTER TABLE `contact_db` ADD isFavorite INT NOT NULL DEFAULT''")
-        }
-    }
+    abstract fun messageDao(): MessageDao
 }

@@ -16,12 +16,15 @@ class AppModule {
     @Provides
     fun provideAppDatabase(@ApplicationContext context: Context) =
         Room.databaseBuilder(
-            context, AppDatabase::class.java, "contact_db"
+            context, AppDatabase::class.java, "app_database"
         )
             .allowMainThreadQueries()
             .addMigrations()
             .build()
 
     @Provides
-    fun provideDao(database: AppDatabase) = database.contactDao()
+    fun provideContactDao(database: AppDatabase) = database.contactDao()
+
+    @Provides
+    fun provideMessageDao(database: AppDatabase) = database.messageDao()
 }

@@ -5,6 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.suonk.contactmanagerapp.ui.fragments.main_pages.ContactsListFragment
 import com.suonk.contactmanagerapp.ui.fragments.main_pages.FavoriteContactsFragment
+import com.suonk.contactmanagerapp.ui.fragments.main_pages.MessagesListFragment
 
 class ViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
@@ -19,7 +20,7 @@ class ViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
                 FavoriteContactsFragment()
             }
             2 -> {
-                ContactsListFragment()
+                MessagesListFragment()
             }
             else -> {
                 ContactsListFragment()

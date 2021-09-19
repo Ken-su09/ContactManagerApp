@@ -82,7 +82,8 @@ class MainFragment : Fragment() {
                     )
                 }
                 2 -> {
-                    tab.icon = ResourcesCompat.getDrawable(resources, R.drawable.ic_group, null)
+                    tab.icon =
+                        ResourcesCompat.getDrawable(resources, R.drawable.ic_message_icon, null)
                 }
             }
         }.attach()
