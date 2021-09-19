@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
@@ -104,18 +105,22 @@ class EditContactFragment : Fragment() {
 
     private fun updateUserClick() {
         binding!!.validateContact.setOnClickListener {
-            val contact = Contact(
-                binding!!.contactNameValue.text.toString(),
-                "",
-                binding!!.userImage.drawable.toBitmap(),
-                binding!!.contactPhoneNumberValue.text.toString(),
-                binding!!.contactEmailValue.text.toString(),
-                isFavorite,
-                contactId
-            )
-            viewModel.updateContact(contact)
-            viewModel.setContactLiveData(contact)
-            (activity as MainActivity).startContactDetails()
+            if (checkIfFieldEmpty()) {
+                val contact = Contact(
+                    binding!!.contactNameValue.text.toString(),
+                    "",
+                    binding!!.userImage.drawable.toBitmap(),
+                    binding!!.contactPhoneNumberValue.text.toString(),
+                    binding!!.contactEmailValue.text.toString(),
+                    isFavorite,
+                    contactId
+                )
+                viewModel.updateContact(contact)
+                viewModel.setContactLiveData(contact)
+                (activity as MainActivity).startContactDetails()
+            } else {
+                Toast.makeText(context, "Field can not be empty !", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -144,6 +149,10 @@ class EditContactFragment : Fragment() {
     }
 
     //endregion
+
+    private fun checkIfFieldEmpty(): Boolean {
+        return binding!!.contactNameValue.text!!.isNotEmpty() && binding!!.contactPhoneNumberValue.text!!.isNotEmpty()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

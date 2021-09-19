@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -38,6 +39,7 @@ class AddNewContactFragment : Fragment() {
         changeImageClick()
         favoriteIconClick()
         saveUserClick()
+        backToContactListClick()
     }
 
     //region ============================================ Clicks ============================================
@@ -65,18 +67,32 @@ class AddNewContactFragment : Fragment() {
 
     private fun saveUserClick() {
         binding!!.validateContact.setOnClickListener {
-            val contact = Contact(
-                binding!!.contactNameValue.text.toString(),
-                "",
-                binding!!.userImage.drawable.toBitmap(),
-                binding!!.contactPhoneNumberValue.text.toString(),
-                binding!!.contactEmailValue.text.toString(),
-                isFavorite
-            )
-            viewModel.addNewContact(contact)
-            viewModel.setContactLiveData(contact)
-            (activity as MainActivity).startContactDetails()
+            if (checkIfFieldEmpty()) {
+                val contact = Contact(
+                    binding!!.contactNameValue.text.toString(),
+                    "",
+                    binding!!.userImage.drawable.toBitmap(),
+                    binding!!.contactPhoneNumberValue.text.toString(),
+                    binding!!.contactEmailValue.text.toString(),
+                    isFavorite
+                )
+                viewModel.addNewContact(contact)
+                viewModel.setContactLiveData(contact)
+                (activity as MainActivity).startContactDetails()
+            } else {
+                Toast.makeText(context, "Field can not be empty !", Toast.LENGTH_LONG).show()
+            }
         }
+    }
+
+    private fun backToContactListClick() {
+        binding!!.backToContactsList.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
+    private fun checkIfFieldEmpty(): Boolean {
+        return binding!!.contactNameValue.text!!.isNotEmpty() && binding!!.contactPhoneNumberValue.text!!.isNotEmpty()
     }
 
     //endregion
